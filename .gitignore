@@ -1,0 +1,5 @@
+# Electron 빌드 산출물과 의존성 디렉터리 제외
+node_modules/
+dist/
+release/
+*.log

@@ -1,0 +1,56 @@
+# Context Notes
+
+## 2026-05-18
+
+- 현재 `AI Agent/Sticky Notes`에는 `CLAUDE.md`만 있어 새 앱의 최소 뼈대를 만든다.
+- 사용자가 요청한 변경은 텍스트 입력과 음성 입력을 고르는 옵션 토글 버튼이다.
+- 아직 Ollama, 음성 인식, 저장소, Electron은 붙이지 않는다.
+- 첫 버전은 브라우저에서 바로 열 수 있는 정적 HTML/CSS/JS로 만든다.
+- 이후 Electron 앱으로 옮길 때도 같은 UI 상태 모델을 재사용할 수 있게 `inputMode` 값을 `text` 또는 `voice`로 관리한다.
+- 사용자의 요청에 따라 DOS 스타일에서 Windows 98 스타일로 UI 방향을 변경했다.
+- Windows 98 스타일은 청록색 데스크톱 배경, 파란 타이틀바, 회색 3D bevel 버튼과 패널, 픽셀 느낌의 기본 시스템 폰트로 표현한다.
+- 외부 폰트를 다운로드하지 않고 로컬 시스템 폰트 스택을 사용한다.
+- 기본 UI는 `MS Sans Serif` 계열, 버튼과 입력 영역은 `Fixedsys`와 `Terminal` 계열을 우선 사용해 레트로한 느낌을 강화한다.
+- 메모 UI 생성 단계에서는 아직 저장소와 Ollama를 붙이지 않는다.
+- `Queue Note` 버튼은 텍스트 입력값을 읽어 화면의 `notes-board`에 메모 카드를 추가한다.
+- 메모 카드는 랜덤 색상을 사용하고, 긴 내용은 기본 접힘 상태로 보이며 카드 클릭으로 펼치거나 다시 접는다.
+- 왼쪽 상단의 체크 버튼은 완료 동작으로 취급하며, 구겨지는 애니메이션 후 DOM에서 제거한다.
+- 메모 카드는 더 이상 프로그램 창 내부 보드에 생성하지 않고, `desktop-notes-layer`에 absolute positioned 요소로 생성한다.
+- 새 메모는 창 오른쪽 바깥을 우선 위치로 삼고, 화면 공간이 부족하면 왼쪽 또는 하단 쪽으로 배치한다.
+- 메모는 pointer event 기반으로 드래그 이동할 수 있으며, 드래그 직후 클릭 이벤트가 접기와 펼치기로 해석되지 않게 막는다.
+- 삭제 애니메이션은 `clip-path`, 왜곡, 회전, fold line pseudo-element를 조합해 접히고 구겨지는 느낌을 낸다.
+- 밝은 색 메모에서도 읽히도록 메모 텍스트는 검은색을 기본으로 하고 흰색 `text-shadow`와 `-webkit-text-stroke`를 적용한다.
+- 흰색 테두리가 두껍게 번지면 글씨가 회색처럼 보이므로 메모 본문은 `#050505`와 굵은 글씨를 사용하고, 흰색 테두리는 얇게 유지한다.
+- 각 메모는 `--note-font-size` CSS 변수를 갖고 `-` / `+` 버튼으로 11px에서 20px 사이를 조정한다.
+- 텍스트 입력창에서는 `Ctrl + Enter`가 `Queue Note` 버튼과 같은 생성 함수를 호출한다.
+- 메모 색상은 밝은 파스텔 대신 retro futurism + NASA punk 느낌의 어두운 팔레트로 변경했다.
+- 색상 팔레트는 단순 배경색 배열이 아니라 배경색, 강조선, 텍스트색, 외곽선색을 포함한 테마 객체로 관리한다.
+- 어두운 메모지에서는 밝은 텍스트와 어두운 외곽선을 사용해 대비를 확보한다.
+- 사용자의 요청에 따라 메모지의 네온 강조 테두리 색상은 제거했다.
+- 메모 글씨는 UI 전체 폰트와 분리해 `--pixel-note-font`를 사용한다.
+- 픽셀 폰트 스택은 `Perfect DOS VGA 437`, `Px437 IBM VGA 8x16`, `Fixedsys Excelsior`, `Fixedsys`, `Terminal` 순서로 시도한다.
+- 메모지 배경은 그라데이션 없이 테마의 `--note-color` 단일 flat color로 표시한다.
+- 메모 생성 시각은 `YYYY.MM.DD HH:mm` 형식으로 메모 오른쪽 상단에 표시한다.
+- 삭제 로그는 정적 HTML 단계이므로 파일 대신 `localStorage`의 `sticky-notes.deleted-log.v1` 키에 JSON 배열로 저장한다.
+- 체크 버튼으로 메모를 삭제할 때 `id`, `content`, `createdAt`, `deletedAt`, `theme`, `fontSize`를 로그에 남긴다.
+- `Deleted Log` 버튼은 Windows 98 스타일 로그 창을 열고, 최신 삭제 항목부터 표시한다.
+- Electron 전환 후에는 현재 로그 데이터 구조를 `data/deleted-notes-log.jsonl` 파일 저장으로 옮길 수 있다.
+- 메모 생성 전에 `redactSensitiveText`를 호출해 화면 표시와 삭제 로그 저장 모두 마스킹된 텍스트만 사용한다.
+- 마스킹 대상은 Windows/Unix 계열 파일 경로, 민감 확장자 파일명, `api_key`, `token`, `password`류 key-value, 흔한 토큰 접두사, PEM 개인키 블록이다.
+- 현재 마스킹은 클라이언트 정규식 기반의 1차 방어이며, Ollama 연동 전에도 같은 함수를 재사용해 모델 입력 전 필터로 사용한다.
+- 메모 위치 계산은 `.window`의 첫 번째 요소가 아니라 `#main-window`를 기준으로 한다. 로그 창 같은 추가 창이 생겨도 기준이 흔들리지 않게 하기 위함이다.
+- 삭제 로그는 최대 200개만 저장하고, `localStorage` 저장 실패 시 콘솔 경고만 남긴 뒤 메모 삭제 흐름은 계속 진행한다.
+- 긴 메모 여부는 더 이상 문자 수로 추정하지 않고, 렌더링 후 `.note-body`의 `scrollHeight`와 `clientHeight`를 비교해 결정한다.
+- 메모 글씨 크기를 바꾸거나 브라우저 창 크기가 바뀌면 `is-long` 상태와 `More` / `Less` 라벨을 다시 계산한다.
+- 정적 앱 단계의 음성 인식은 브라우저 Web Speech API를 사용한다. 지원 브라우저에서는 `SpeechRecognition` 또는 `webkitSpeechRecognition`을 사용한다.
+- 음성 인식 언어는 우선 `ko-KR`로 설정한다.
+- 인식 결과는 `voice-transcript`에 표시하고, `Queue Transcript`를 누르면 텍스트 입력과 같은 마스킹/메모 생성 흐름을 탄다.
+- Web Speech API는 브라우저와 실행 컨텍스트에 따라 마이크 권한 또는 지원 여부가 달라질 수 있으므로, Electron 전환 시 로컬 STT 엔진으로 교체 가능성을 남긴다.
+- 독립 실행형 앱을 위해 Electron 진입점 `main.js`를 추가했다.
+- `package.json`은 `npm start`로 Electron 앱 실행, `npm run dist`로 Windows portable exe 생성을 목표로 한다.
+- 패키징 결과물 이름은 `StickyNotesAgent.exe`로 설정했다.
+- 현재 renderer는 기존 `index.html`, `styles.css`, `script.js`를 그대로 사용한다.
+- Windows 심볼릭 링크 권한 문제를 피하기 위해 portable 빌드는 우선 `signAndEditExecutable: false`로 둔다.
+- Electron 앱에서는 실제 OS 창이 이미 앱의 외부 프레임이므로, 메인 화면의 가짜 Windows 98 창 프레임을 제거했다.
+- Windows 98 스타일은 메인 버튼, 입력 패널, notes panel, 삭제 로그 팝업 같은 내부 컨트롤 디자인 언어로 유지한다.
+- 삭제 로그는 보조 대화상자 역할이라 `window log-window` 스타일을 계속 사용한다.

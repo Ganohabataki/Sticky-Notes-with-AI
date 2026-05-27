@@ -1,0 +1,84 @@
+<!-- 음성 메모 에이전트의 Windows 98 스타일 화면 구조 -->
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Windows 98 Sticky Notes Agent</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="desktop">
+      <section class="app-panel" id="main-window" aria-labelledby="app-title">
+        <header class="app-header">
+          <div>
+            <p class="helper-text">Windows 98 style local note agent</p>
+            <h1 id="app-title">Sticky Notes Agent</h1>
+          </div>
+          <span class="app-status">READY</span>
+        </header>
+
+        <div class="window-body">
+          <p class="helper-text">Choose how this note should be captured.</p>
+
+          <div class="mode-toggle" role="group" aria-label="입력 방식 선택">
+            <button class="mode-button is-active" type="button" data-mode="text" aria-pressed="true">
+              Text Input
+            </button>
+            <button class="mode-button" type="button" data-mode="voice" aria-pressed="false">
+              Voice Input
+            </button>
+          </div>
+
+          <section class="input-panel" data-panel="text">
+            <label for="memo-text">Memo text</label>
+            <textarea id="memo-text" rows="6" placeholder="업무 메모를 입력하세요. 예: 내일 오후 3시에 견적서 보내기"></textarea>
+            <button class="command-button" type="button" id="queue-note">Queue Note</button>
+          </section>
+
+          <section class="input-panel is-hidden" data-panel="voice">
+            <div class="voice-meter" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p class="voice-copy" id="voice-status">Microphone standby.</p>
+            <label for="voice-transcript">Voice transcript</label>
+            <textarea id="voice-transcript" rows="5" placeholder="음성 인식 결과가 여기에 표시됩니다."></textarea>
+            <div class="voice-actions">
+              <button class="command-button" type="button" id="voice-toggle">Start Rec</button>
+              <button class="command-button" type="button" id="queue-voice-note">Queue Transcript</button>
+            </div>
+          </section>
+
+          <section class="notes-panel" aria-labelledby="notes-title">
+            <div class="panel-caption">
+              <h2 id="notes-title">Desktop Notes</h2>
+              <span id="note-count">0 item(s)</span>
+            </div>
+            <p class="helper-text">Queued notes appear on the desktop and can be dragged.</p>
+            <button class="command-button log-button" type="button" id="open-log">Deleted Log</button>
+          </section>
+        </div>
+      </section>
+      <div class="desktop-notes-layer" id="notes-layer" aria-live="polite"></div>
+
+      <section class="window log-window is-hidden" id="log-window" aria-labelledby="log-title">
+        <header class="title-bar">
+          <div class="title-caption">
+            <span class="app-icon" aria-hidden="true"></span>
+            <h2 id="log-title">Deleted Notes Log</h2>
+          </div>
+          <button class="window-close" type="button" id="close-log" aria-label="삭제 로그 닫기">×</button>
+        </header>
+        <div class="window-body">
+          <div class="log-list" id="log-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

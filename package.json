@@ -1,0 +1,37 @@
+{
+  "name": "sticky-notes-agent",
+  "version": "0.1.0",
+  "description": "Windows 98 style sticky notes agent with text and voice input.",
+  "author": "Local",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "local.sticky-notes-agent",
+    "productName": "Sticky Notes Agent",
+    "files": [
+      "index.html",
+      "styles.css",
+      "script.js",
+      "main.js",
+      "package.json"
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "StickyNotesAgent.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  }
+}
